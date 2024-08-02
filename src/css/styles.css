@@ -1,0 +1,76 @@
+body {
+  background-color: #121212;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+#container-principal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+  padding: 20px;
+}
+#artist-profile {
+  text-align: center;
+  margin-bottom: 40px;
+  width: 100%;
+}
+#artist-profile img {
+  width: 94%;
+  height: 50%;
+  display: block;
+  margin: 0 auto;
+}
+#artist-name {
+  font-size: 2em;
+  margin-top: 10px;
+}
+#albums {
+  width: 100%;
+  max-width: 1200px;
+}
+.album {
+  background-color: #181818;
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 10px;
+}
+.album-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.album img {
+  width: 80px;
+  height: 80px;
+  border-radius: 5px;
+  margin-right: 20px;
+}
+.album-title {
+  font-size: 1.5em;
+}
+.album-year {
+  color: #b3b3b3;
+  margin-left: 10px;
+}
+.tracks {
+  width: 100%;
+  margin-top: 10px;
+}
+.track {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid #333;
+}
+.track-name {
+  padding-left: 10px;
+}
+.track-duration {
+  padding-right: 10px;
+  text-align: right;
+  color: #b3b3b3;
+}
