@@ -1,31 +1,69 @@
 import { data } from '/src/data/data.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', main);
+
+function main() {
   const artist = data.artistUnion;
   const containerPrincipal = document.createElement('div');
   containerPrincipal.id = 'container-principal';
 
-  // PERFIL ARTISTA
-  const profile = document.createElement('div');
-  profile.id = 'artist-profile';
+  createArtistProfile(artist.profile, artist.stats, containerPrincipal);
+  createAlbums(artist.discography.albums.items, containerPrincipal);
 
-  const profileImage = document.createElement('img');
-  profileImage.src = artist.profile.imageUrl;
-  profileImage.alt = `${artist.profile.name} profile picture`;
+  document.body.appendChild(containerPrincipal);
+}
 
-  const artistName = document.createElement('div');
-  artistName.id = 'artist-name';
-  artistName.textContent = artist.profile.name;
-
-  profile.appendChild(profileImage);
-  profile.appendChild(artistName);
-  containerPrincipal.appendChild(profile);
-
-  // ALBUMS
+function createArtistProfile(profile, stats, container) {
+    const profileDiv = document.createElement('div');
+    profileDiv.id = 'artist-profile';
+    profileDiv.style.backgroundImage = `url(${profile.imageUrl})`;
+  
+    const overlay = document.createElement('div');
+    overlay.classList.add('overlay');
+  
+    const artistInfo = document.createElement('div');
+    artistInfo.classList.add('artist-info');
+  
+    const verifiedContainer = document.createElement('div');
+    verifiedContainer.classList.add('verified-container');
+  
+    const verifiedIcon = document.createElement('img');
+    verifiedIcon.src = '/src/img/icon-verificado.png'; // Ruta local a la imagen del ícono de verificación
+    verifiedIcon.alt = 'Artista verificado';
+    verifiedIcon.classList.add('verified-icon');
+  
+    const verifiedText = document.createElement('span');
+    verifiedText.textContent = 'Verified Artist';
+  
+    verifiedContainer.appendChild(verifiedIcon);
+    verifiedContainer.appendChild(verifiedText);
+  
+    const artistNameContainer = document.createElement('div');
+    artistNameContainer.classList.add('artist-name-container');
+  
+    const artistName = document.createElement('h1');
+    artistName.id = 'artist-name';
+    artistName.textContent = profile.name;
+  
+    artistNameContainer.appendChild(artistName);
+  
+    const monthlyListeners = document.createElement('p');
+    monthlyListeners.id = 'monthly-listeners';
+    monthlyListeners.textContent = `${stats.monthlyListeners} monthly listeners`;
+  
+    artistInfo.appendChild(verifiedContainer);
+    artistInfo.appendChild(artistNameContainer);
+    artistInfo.appendChild(monthlyListeners);
+    overlay.appendChild(artistInfo);
+    profileDiv.appendChild(overlay);
+    container.appendChild(profileDiv);
+  }
+  
+function createAlbums(albums, container) {
   const albumsContainer = document.createElement('div');
   albumsContainer.id = 'albums';
 
-  artist.discography.albums.items.forEach((album) => {
+  albums.forEach((album) => {
     album.releases.items.forEach((release) => {
       const albumCard = document.createElement('div');
       albumCard.classList.add('album');
@@ -50,42 +88,45 @@ document.addEventListener('DOMContentLoaded', () => {
       albumHeader.appendChild(albumYear);
       albumCard.appendChild(albumHeader);
 
-      // CANCIONES
-      const tracksContainer = document.createElement('div');
-      tracksContainer.classList.add('tracks');
-
-      release.tracks.items.forEach((track, index) => {
-        const trackItem = document.createElement('div');
-        trackItem.classList.add('track');
-
-        const trackName = document.createElement('div');
-        trackName.classList.add('track-name');
-        trackName.textContent = `${index + 1}. ${track.track.name}`;
-
-        const trackDuration = document.createElement('div');
-        trackDuration.classList.add('track-duration');
-        if (track.track.duration && track.track.duration.totalMilliseconds) {
-          trackDuration.textContent = formatDuration(track.track.duration.totalMilliseconds);
-        } else {
-          trackDuration.textContent = 'N/A';
-        }
-
-        trackItem.appendChild(trackName);
-        trackItem.appendChild(trackDuration);
-        tracksContainer.appendChild(trackItem);
-      });
-
-      albumCard.appendChild(tracksContainer);
+      createTracks(release.tracks.items, albumCard);
       albumsContainer.appendChild(albumCard);
     });
   });
 
-  containerPrincipal.appendChild(albumsContainer);
-  document.body.appendChild(containerPrincipal);
-});
+  container.appendChild(albumsContainer);
+}
+
+function createTracks(tracks, albumCard) {
+  const tracksContainer = document.createElement('div');
+  tracksContainer.classList.add('tracks');
+
+  tracks.forEach((track, index) => {
+    const trackItem = document.createElement('div');
+    trackItem.classList.add('track');
+
+    const trackName = document.createElement('div');
+    trackName.classList.add('track-name');
+    trackName.textContent = `${index + 1}. ${track.track.name}`;
+
+    const trackDuration = document.createElement('div');
+    trackDuration.classList.add('track-duration');
+    if (track.track.duration && track.track.duration.totalMilliseconds) {
+      trackDuration.textContent = formatDuration(track.track.duration.totalMilliseconds);
+    } else {
+      trackDuration.textContent = 'N/A';
+    }
+
+    trackItem.appendChild(trackName);
+    trackItem.appendChild(trackDuration);
+    tracksContainer.appendChild(trackItem);
+  });
+
+  albumCard.appendChild(tracksContainer);
+}
 
 function formatDuration(ms) {
-  const minutes = Math.floor(ms / 60000);
-  const seconds = Math.floor((ms % 60000) / 1000);
+  const date = new Date(ms);
+  const minutes = date.getUTCMinutes();
+  const seconds = date.getUTCSeconds();
   return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 }

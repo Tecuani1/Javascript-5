@@ -1,76 +1,125 @@
-body {
-  background-color: #121212;
-  color: #fff;
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-}
-#container-principal {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 20px;
-  padding: 20px;
-}
-#artist-profile {
-  text-align: center;
-  margin-bottom: 40px;
-  width: 100%;
-}
-#artist-profile img {
-  width: 94%;
-  height: 50%;
-  display: block;
-  margin: 0 auto;
-}
-#artist-name {
-  font-size: 2em;
-  margin-top: 10px;
-}
-#albums {
-  width: 100%;
-  max-width: 1200px;
-}
-.album {
-  background-color: #181818;
-  margin-bottom: 20px;
-  padding: 20px;
-  border-radius: 10px;
-}
-.album-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-}
-.album img {
-  width: 80px;
-  height: 80px;
-  border-radius: 5px;
-  margin-right: 20px;
-}
-.album-title {
-  font-size: 1.5em;
-}
-.album-year {
-  color: #b3b3b3;
-  margin-left: 10px;
-}
-.tracks {
-  width: 100%;
-  margin-top: 10px;
-}
-.track {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  padding: 5px 0;
-  border-bottom: 1px solid #333;
-}
-.track-name {
-  padding-left: 10px;
-}
-.track-duration {
-  padding-right: 10px;
-  text-align: right;
-  color: #b3b3b3;
-}
+@font-face {
+    font-family: 'SpotifyMixUITitle';
+    src: url('https://encore.scdn.co/fonts/SpotifyMixUITitleVariable-8769ccfde3379b7ebcadd9529b49d0cc.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  body {
+    font-size: 16px;
+    font-family: sans-serif;
+    color: #ffffff;
+    background: #242323;
+  }
+  
+  #container-principal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    padding: 20px;
+    width: 1200px;
+  }
+  
+  #artist-profile {
+    position: relative;
+    text-align: left;
+    width: 100%;
+    background-size: cover;
+    height: 300px;
+  }
+  
+  #artist-profile .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.219);
+    
+  }
+  
+  .artist-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  
+  .verified-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .verified-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
+  }
+  
+  #artist-name {
+    font-size: 3em;
+    font-weight: bold;
+    font-family: 'SpotifyMixUITitle';
+  }
+  
+  #monthly-listeners {
+    font-size: 1em;
+    opacity: 0.8;
+  }  
+  
+  #albums {
+    width: 100%;
+    max-width: 1200px;
+  }
+  
+  .album {
+    background-color: #181818;
+    padding: 20px;
+  }
+  
+  .album-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .album img {
+    width: 80px;
+    height: 80px;
+    border-radius: 5px;
+    margin-right: 20px;
+  }
+  
+  .album-title {
+    font-size: 1.5em;
+  }
+  
+  .album-year {
+    color: #b3b3b3;
+    margin-left: 10px;
+  }
+  
+  .tracks {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .track {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px solid #333;
+  }
+  
+  .track-name {
+    padding-left: 10px;
+  }
+  
+  .track-duration {
+    padding-right: 10px;
+    text-align: right;
+    color: #b3b3b3;
+  }
+  
