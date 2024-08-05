@@ -1,125 +1,198 @@
-@font-face {
-    font-family: 'SpotifyMixUITitle';
-    src: url('https://encore.scdn.co/fonts/SpotifyMixUITitleVariable-8769ccfde3379b7ebcadd9529b49d0cc.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-  }
+:root {
+  --font-family-title: 'SpotifyMixUITitle';
+  --font-family-body: sans-serif;
+  --font-size-base: 16px;
+  --font-size-title: 3em;
+  --font-size-album-title: 1.5em;
+  --font-size-track-name: 16px;
+  --font-size-artist-name: 14px;
+  --font-size-monthly-listeners: 1em;
+  --font-size-album-year: 13px;
+  --color-text: #ffffff;
+  --color-background: #242323;
+  --color-background-album: #181818;
+  --color-text-muted: #b3b3b3;
+  --color-hover: #302f2f9c;
+  --image-size-verified-icon: 24px;
+  --image-size-album: 136px;
+  --image-size-button: 32px;
+  --spacing-small: 10px;
+  --spacing-medium: 15px;
+  --spacing-large: 20px;
+}
 
-  body {
-    font-size: 16px;
-    font-family: sans-serif;
-    color: #ffffff;
-    background: #242323;
-  }
-  
-  #container-principal {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 20px;
-    padding: 20px;
-    width: 1200px;
-  }
-  
-  #artist-profile {
-    position: relative;
-    text-align: left;
-    width: 100%;
-    background-size: cover;
-    height: 300px;
-  }
-  
-  #artist-profile .overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.219);
-    
-  }
-  
-  .artist-info {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 10px;
-  }
-  
-  .verified-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .verified-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 5px;
-  }
-  
-  #artist-name {
-    font-size: 3em;
-    font-weight: bold;
-    font-family: 'SpotifyMixUITitle';
-  }
-  
-  #monthly-listeners {
-    font-size: 1em;
-    opacity: 0.8;
-  }  
-  
-  #albums {
-    width: 100%;
-    max-width: 1200px;
-  }
-  
-  .album {
-    background-color: #181818;
-    padding: 20px;
-  }
-  
-  .album-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .album img {
-    width: 80px;
-    height: 80px;
-    border-radius: 5px;
-    margin-right: 20px;
-  }
-  
-  .album-title {
-    font-size: 1.5em;
-  }
-  
-  .album-year {
-    color: #b3b3b3;
-    margin-left: 10px;
-  }
-  
-  .tracks {
-    width: 100%;
-    margin-top: 10px;
-  }
-  
-  .track {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    padding: 5px 0;
-    border-bottom: 1px solid #333;
-  }
-  
-  .track-name {
-    padding-left: 10px;
-  }
-  
-  .track-duration {
-    padding-right: 10px;
-    text-align: right;
-    color: #b3b3b3;
-  }
-  
+@font-face {
+  font-family: var(--font-family-title);
+  src: url('https://encore.scdn.co/fonts/SpotifyMixUITitleVariable-8769ccfde3379b7ebcadd9529b49d0cc.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-body);
+  color: var(--color-text);
+  background: var(--color-background);
+}
+
+#container-principal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: var(--spacing-large);
+  padding: var(--spacing-large);
+  width: 1200px;
+}
+
+#artist-profile {
+  position: relative;
+  text-align: left;
+  width: 100%;
+  background-size: cover;
+  height: 300px;
+}
+
+#artist-profile .overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.artist-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-small);
+}
+
+.verified-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-small);
+}
+
+.verified-icon {
+  width: var(--image-size-verified-icon);
+  height: var(--image-size-verified-icon);
+  margin: var(--spacing-medium);
+}
+
+#artist-name {
+  font-size: var(--font-size-title);
+  font-weight: bold;
+  font-family: var(--font-family-title);
+  margin: var(--spacing-medium);
+}
+
+#monthly-listeners {
+  font-size: var(--font-size-monthly-listeners);
+  margin: var(--spacing-medium);
+}
+
+#albums {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.album {
+  background-color: var(--color-background-album);
+  padding: var(--spacing-large);
+}
+
+.album-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-large);
+  padding: inherit;
+}
+
+.album img {
+  width: var(--image-size-album);
+  height: var(--image-size-album);
+  border-radius: 5px;
+  margin-right: var(--spacing-large);
+}
+
+.album-info {
+  flex-grow: 1;
+}
+
+.album-title {
+  font-size: var(--font-size-album-title);
+  padding: inherit;
+}
+
+.album-year {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-album-year);
+  margin-top: var(--spacing-small);
+}
+
+.album-actions {
+  display: flex;
+  align-items: center;
+  margin-top: var(--spacing-small);
+}
+
+.album-action-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-top: var(--spacing-small);
+}
+
+.album-action-button img {
+  width: var(--image-size-button);
+  height: var(--image-size-button);
+}
+
+.tracks-table {
+  width: 100%;
+}
+
+.track {
+  display: grid;
+  grid-template-columns: 30px 1fr 60px;
+  align-items: center;
+}
+
+.track-header {
+  font-weight: bold;
+  margin-bottom: var(--spacing-small);
+}
+
+.track-number, .track-title, .track-duration {
+  padding: var(--spacing-small);
+}
+
+.track-number {
+  text-align: center;
+}
+
+.track-title {
+  display: flex;
+  flex-direction: column;
+}
+
+.track-name {
+  font-size: var(--font-size-track-name);
+}
+
+.artist-name {
+  font-size: var(--font-size-artist-name);
+  color: var(--color-text-muted);
+}
+
+.track-duration {
+  text-align: right;
+  padding-right: var(--spacing-small);
+  color: var(--color-text-muted);
+}
+
+.track:hover {
+  background-color: var(--color-hover);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
