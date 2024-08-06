@@ -1,198 +1,214 @@
 :root {
-  --font-family-title: 'SpotifyMixUITitle';
-  --font-family-body: sans-serif;
-  --font-size-base: 16px;
-  --font-size-title: 3em;
-  --font-size-album-title: 1.5em;
-  --font-size-track-name: 16px;
-  --font-size-artist-name: 14px;
-  --font-size-monthly-listeners: 1em;
-  --font-size-album-year: 13px;
-  --color-text: #ffffff;
-  --color-background: #242323;
-  --color-background-album: #181818;
-  --color-text-muted: #b3b3b3;
-  --color-hover: #302f2f9c;
-  --image-size-verified-icon: 24px;
-  --image-size-album: 136px;
-  --image-size-button: 32px;
-  --spacing-small: 10px;
-  --spacing-medium: 15px;
-  --spacing-large: 20px;
-}
-
-@font-face {
-  font-family: var(--font-family-title);
-  src: url('https://encore.scdn.co/fonts/SpotifyMixUITitleVariable-8769ccfde3379b7ebcadd9529b49d0cc.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
+  --primary-font: Arial, sans-serif;
+  --background-color: #181818;
+  --text-color: #fff;
+  --secondary-color: #1db954;
+  --grey-color: #b3b3b3;
+  --button-border-radius: 20px;
 }
 
 body {
-  font-size: var(--font-size-base);
-  font-family: var(--font-family-body);
-  color: var(--color-text);
-  background: var(--color-background);
+  font-family: var(--primary-font);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
 }
 
 #container-principal {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: var(--spacing-large);
-  padding: var(--spacing-large);
-  width: 1200px;
+  padding: 20px;
 }
 
 #artist-profile {
-  position: relative;
-  text-align: left;
   width: 100%;
+  height: 400px;
+  display: flex;
+  align-items: flex-end;
   background-size: cover;
-  height: 300px;
+  background-position: center;
+  position: relative;
 }
 
-#artist-profile .overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+.overlay {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
 }
 
 .artist-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: var(--spacing-small);
+  color: var(--text-color);
 }
 
 .verified-container {
   display: flex;
   align-items: center;
-  margin-bottom: var(--spacing-small);
 }
 
 .verified-icon {
-  width: var(--image-size-verified-icon);
-  height: var(--image-size-verified-icon);
-  margin: var(--spacing-medium);
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
 }
 
 #artist-name {
-  font-size: var(--font-size-title);
-  font-weight: bold;
-  font-family: var(--font-family-title);
-  margin: var(--spacing-medium);
+  font-size: 48px;
+  margin: 0;
 }
 
 #monthly-listeners {
-  font-size: var(--font-size-monthly-listeners);
-  margin: var(--spacing-medium);
+  font-size: 16px;
+  color: var(--grey-color);
+  margin: 10px 0 0 0;
 }
 
 #albums {
   width: 100%;
-  max-width: 1200px;
+  background-color: #282828;
 }
 
 .album {
-  background-color: var(--color-background-album);
-  padding: var(--spacing-large);
+  background-color: #282828;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  padding: 20px;
+  color: var(--text-color);
 }
 
 .album-header {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: var(--spacing-large);
-  padding: inherit;
 }
 
-.album img {
-  width: var(--image-size-album);
-  height: var(--image-size-album);
-  border-radius: 5px;
-  margin-right: var(--spacing-large);
+.album-image {
+  width: 136px;
+  height: 136px;
 }
 
 .album-info {
-  flex-grow: 1;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .album-title {
-  font-size: var(--font-size-album-title);
-  padding: inherit;
+  font-size: 24px;
 }
 
 .album-year {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-album-year);
-  margin-top: var(--spacing-small);
+  font-size: 14px;
+  color: var(--grey-color);
 }
 
 .album-actions {
   display: flex;
-  align-items: center;
-  margin-top: var(--spacing-small);
+  margin-top: 10px;
 }
 
 .album-action-button {
   background: none;
   border: none;
   cursor: pointer;
-  margin-top: var(--spacing-small);
+  margin-right: 10px;
 }
 
-.album-action-button img {
-  width: var(--image-size-button);
-  height: var(--image-size-button);
+.tracks {
+  margin-top: 20px;
 }
 
 .tracks-table {
-  width: 100%;
-}
-
-.track {
-  display: grid;
-  grid-template-columns: 30px 1fr 60px;
-  align-items: center;
-}
-
-.track-header {
-  font-weight: bold;
-  margin-bottom: var(--spacing-small);
-}
-
-.track-number, .track-title, .track-duration {
-  padding: var(--spacing-small);
-}
-
-.track-number {
-  text-align: center;
-}
-
-.track-title {
   display: flex;
   flex-direction: column;
 }
 
-.track-name {
-  font-size: var(--font-size-track-name);
+.track {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
 }
 
-.artist-name {
-  font-size: var(--font-size-artist-name);
-  color: var(--color-text-muted);
+.track-header {
+  border-bottom: 1px solid var(--grey-color);
+}
+
+.track-number {
+  width: 10%;
+}
+
+.track-title {
+  width: 80%;
 }
 
 .track-duration {
-  text-align: right;
-  padding-right: var(--spacing-small);
-  color: var(--color-text-muted);
+  width: 10%;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .track:hover {
-  background-color: var(--color-hover);
+  background-color: #333333;
+}
+
+.buttons-container {
+  display: flex;
+  width: 200px;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-left: 20px;
+}
+
+.play-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #1db954;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: transform 0.2s ease-in-out;
+}
+
+.play-button:hover {
+  transform: scale(1.1);
+}
+
+.play-button img {
+  width: 20px;
+  height: 20px;
+}
+
+.follow-button {
+  background-color: #000000;
+  color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 50px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.follow-button:hover {
+  transform: scale(1.1);
+}
+
+.more-button {
+  background-color: transparent;
+  border: none;
+  color: #b3b3b3;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.more-button:hover {
+  transform: scale(1.1);
+}
+
+.more-button img {
+  width: 24px;
+  height: 24px;
 }
