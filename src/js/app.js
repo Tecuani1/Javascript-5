@@ -10,8 +10,9 @@ function main() {
     return;
   }
 
-  const containerPrincipal = document.createElement('div');
-  containerPrincipal.id = 'container-principal';
+  const containerPrincipal = createElementWithAttributes('div', {
+    id: 'container-principal',
+  });
 
   createArtistProfile(artist.profile, artist.stats, containerPrincipal);
   createAlbums(artist.discography?.albums?.items || [], artist.profile.name, containerPrincipal);
@@ -19,51 +20,77 @@ function main() {
   document.body.appendChild(containerPrincipal);
 }
 
+function createElementWithAttributes(tag, attributes = {}, children = []) {
+  const element = document.createElement(tag);
+
+  for (const [key, value] of Object.entries(attributes)) {
+    if (key === 'style') {
+      Object.assign(element.style, value);
+    } else if (key.startsWith('data-')) {
+      element.dataset[key.slice(5)] = value;
+    } else {
+      element[key] = value;
+    }
+  }
+
+  children.forEach((child) => {
+    if (typeof child === 'string') {
+      element.appendChild(document.createTextNode(child));
+    } else {
+      element.appendChild(child);
+    }
+  });
+
+  return element;
+}
+
 function createArtistProfile(profile, stats, container) {
   if (!profile || !stats) {
-    console.log('No se encontraron datos del perfil o estadísticas del artista.');
+    showEmptyState(container, 'No se encontraron datos del perfil o estadísticas del artista.');
     return;
   }
 
-  const profileDiv = document.createElement('div');
-  profileDiv.id = 'artist-profile';
-  profileDiv.style.backgroundImage = `url(${profile?.imageUrl})`;
+  const profileDiv = createElementWithAttributes('div', {
+    id: 'artist-profile',
+    style: { backgroundImage: `url(${profile?.imageUrl})` },
+  });
 
-  const overlay = document.createElement('div');
-  overlay.classList.add('overlay');
+  const overlay = createElementWithAttributes('div', { className: 'overlay' });
+  const artistInfo = createElementWithAttributes('div', { className: 'artist-info' });
 
-  const artistInfo = document.createElement('div');
-  artistInfo.classList.add('artist-info');
+  if (profile.verified) {
+    const verifiedIcon = createElementWithAttributes('img', {
+      src: '/src/img/icon-verificado.png',
+      alt: 'Artista verificado',
+    });
 
-  const verifiedContainer = document.createElement('div');
-  verifiedContainer.classList.add('verified-container');
+    const verifiedText = createElementWithAttributes('span', {}, ['Verified Artist']);
+    const verifiedContainer = createElementWithAttributes(
+      'div',
+      { className: 'verified-container' },
+      [verifiedIcon, verifiedText],
+    );
 
-  const verifiedIcon = document.createElement('img');
-  verifiedIcon.src = '/src/img/icon-verificado.png';
-  verifiedIcon.alt = 'Artista verificado';
-  verifiedIcon.classList.add('verified-icon');
+    artistInfo.appendChild(verifiedContainer);
+  }
 
-  const verifiedText = document.createElement('span');
-  verifiedText.textContent = 'Verified Artist';
+  const artistName = createElementWithAttributes('h1', {
+    id: 'artist-name',
+    textContent: profile?.name || 'Unknown Artist',
+  });
+  const artistNameContainer = createElementWithAttributes(
+    'div',
+    { className: 'artist-name-container' },
+    [artistName],
+  );
 
-  verifiedContainer.appendChild(verifiedIcon);
-  verifiedContainer.appendChild(verifiedText);
+  const formattedListeners = stats?.monthlyListeners?.toLocaleString();
+  const monthlyListeners = createElementWithAttributes('p', {
+    id: 'monthly-listeners',
+    textContent: formattedListeners ? `${formattedListeners} monthly listeners` : '',
+    style: { display: formattedListeners ? 'block' : 'none' },
+  });
 
-  const artistNameContainer = document.createElement('div');
-  artistNameContainer.classList.add('artist-name-container');
-
-  const artistName = document.createElement('h1');
-  artistName.id = 'artist-name';
-  artistName.textContent = profile?.name || 'Unknown Artist';
-
-  artistNameContainer.appendChild(artistName);
-
-  const monthlyListeners = document.createElement('p');
-  monthlyListeners.id = 'monthly-listeners';
-  const formattedListeners = stats?.monthlyListeners?.toLocaleString() || 'N/A';
-  monthlyListeners.textContent = `${formattedListeners} monthly listeners`;
-
-  artistInfo.appendChild(verifiedContainer);
   artistInfo.appendChild(artistNameContainer);
   artistInfo.appendChild(monthlyListeners);
   overlay.appendChild(artistInfo);
@@ -73,70 +100,72 @@ function createArtistProfile(profile, stats, container) {
 
 function createAlbums(albums, artistName, container) {
   if (albums.length === 0) {
-    console.log('No se encontraron álbumes.');
+    showEmptyState(container, 'No se encontraron álbumes.');
     return;
   }
 
-  const albumsContainer = document.createElement('div');
-  albumsContainer.id = 'albums';
-
-  // Crear el contenedor de botones
-  const buttonsContainer = document.createElement('div');
-  buttonsContainer.classList.add('buttons-container');
-
-  const playButton = createButton('/src/img/play.svg', 'Play', 'play-button', 'play-button');
-  const followButton = createTextButton('Follow', 'follow-button');
-  const moreButton = createButton('/src/img/more.svg', 'More', 'more-button', 'more-button');
-
-  buttonsContainer.appendChild(playButton);
-  buttonsContainer.appendChild(followButton);
-  buttonsContainer.appendChild(moreButton);
+  const albumsContainer = createElementWithAttributes('div', { id: 'albums' });
+  const buttonsContainer = createButtonsContainer();
   albumsContainer.appendChild(buttonsContainer);
 
   albums.forEach((album) => {
     album?.releases?.items?.forEach((release) => {
-      const albumCard = document.createElement('div');
-      albumCard.classList.add('album');
+      const releaseName = release?.name || 'Unknown Album';
 
-      const albumHeader = document.createElement('div');
-      albumHeader.classList.add('album-header');
+      const albumImage = createElementWithAttributes('img', {
+        src: release?.coverArt?.sources?.[0]?.url || '',
+        alt: `${releaseName} cover`,
+        className: 'album-image',
+      });
 
-      const albumImage = document.createElement('img');
-      albumImage.src = release?.coverArt?.sources?.[0]?.url || '';
-      albumImage.alt = `${release?.name || 'Unknown Album'} cover`;
-      albumImage.classList.add('album-image'); // Añadimos la clase para la imagen del álbum
+      const albumTitle = createElementWithAttributes('div', {
+        className: 'album-title',
+        textContent: releaseName,
+      });
+      const albumYear = createElementWithAttributes('div', {
+        className: 'album-year',
+        textContent: `Album • ${release?.date?.year || 'Unknown Year'} • ${
+          release?.tracks?.items?.length || 0
+        } songs`,
+      });
 
-      const albumInfo = document.createElement('div');
-      albumInfo.classList.add('album-info');
+      const albumPlayButton = createButtonUnified({
+        imagePath: '/src/img/play.svg',
+        altText: 'Play',
+        cssClass: 'album-action-button',
+        type: 'image',
+      });
 
-      const albumTitle = document.createElement('div');
-      albumTitle.classList.add('album-title');
-      albumTitle.textContent = release?.name || 'Unknown Album';
+      const albumAddButton = createButtonUnified({
+        imagePath: '/src/img/add.svg',
+        altText: 'Add',
+        cssClass: 'album-action-button',
+        type: 'image',
+      });
 
-      const albumYear = document.createElement('div');
-      albumYear.classList.add('album-year');
-      albumYear.textContent = `Album • ${release?.date?.year || 'Unknown Year'} • ${
-        release?.tracks?.items?.length || 0
-      } songs`;
+      const albumMoreButton = createButtonUnified({
+        imagePath: '/src/img/more.svg',
+        altText: 'More',
+        cssClass: 'album-action-button',
+        type: 'image',
+      });
 
-      const albumActions = document.createElement('div');
-      albumActions.classList.add('album-actions');
+      const albumActions = createElementWithAttributes('div', { className: 'album-actions' }, [
+        albumPlayButton,
+        albumAddButton,
+        albumMoreButton,
+      ]);
+      const albumInfo = createElementWithAttributes('div', { className: 'album-info' }, [
+        albumTitle,
+        albumYear,
+        albumActions,
+      ]);
+      const albumHeader = createElementWithAttributes('div', { className: 'album-header' }, [
+        albumImage,
+        albumInfo,
+      ]);
 
-      const albumPlayButton = createImageButton('/src/img/play.svg', 'Play', 'album-play-button');
-      const albumAddButton = createImageButton('/src/img/add.svg', 'Add', 'album-add-button');
-      const albumMoreButton = createImageButton('/src/img/more.svg', 'More', 'album-more-button');
-
-      albumActions.appendChild(albumPlayButton);
-      albumActions.appendChild(albumAddButton);
-      albumActions.appendChild(albumMoreButton);
-
-      albumInfo.appendChild(albumTitle);
-      albumInfo.appendChild(albumYear);
-      albumInfo.appendChild(albumActions);
-
-      albumHeader.appendChild(albumImage);
-      albumHeader.appendChild(albumInfo);
-      albumCard.appendChild(albumHeader);
+      const albumCard = createElementWithAttributes('div', { className: 'album' }, [albumHeader]);
 
       createTracks(release?.tracks?.items || [], albumCard, artistName);
       albumsContainer.appendChild(albumCard);
@@ -146,126 +175,124 @@ function createAlbums(albums, artistName, container) {
   container.appendChild(albumsContainer);
 }
 
-function createButton(imagePath, altText, id, cssClass) {
-  const button = document.createElement('button');
-  button.classList.add(cssClass);
-  button.id = id;
-
-  const img = document.createElement('img');
-  img.src = imagePath;
-  img.alt = altText;
-  button.appendChild(img);
-
-  button.addEventListener('click', () => {
-    console.log(`Button clicked: ${altText}`);
-  });
-
-  return button;
-}
-
-function createTextButton(text, id) {
-  const button = document.createElement('button');
-  button.textContent = text;
-  button.id = id;
-  button.classList.add('follow-button');
-
-  button.addEventListener('click', () => {
-    console.log(`Button clicked: ${text}`);
-  });
-
-  return button;
-}
-
-function createImageButton(imagePath, altText, id) {
-  const button = document.createElement('button');
-  button.classList.add('album-action-button');
-
-  const img = document.createElement('img');
-  img.src = imagePath;
-  img.alt = altText;
-  img.id = id;
-
-  button.appendChild(img);
-  button.addEventListener('click', () => {
-    console.log(`Button clicked: ${altText}`);
-  });
-
-  return button;
-}
-
 function createTracks(tracks, albumCard, artistName) {
   if (tracks.length === 0) {
     console.log('No se encontraron pistas.');
     return;
   }
 
-  const tracksContainer = document.createElement('div');
-  tracksContainer.classList.add('tracks');
+  const headerNumber = createElementWithAttributes('div', {
+    className: 'track-number',
+    textContent: '#',
+  });
+  const headerTitle = createElementWithAttributes('div', {
+    className: 'track-title',
+    textContent: 'Título',
+  });
+  const headerDuration = createElementWithAttributes('div', { className: 'track-duration' }, [
+    createElementWithAttributes('img', { src: '/src/img/time.svg', alt: 'Time Icon' }),
+  ]);
 
-  const tracksTable = document.createElement('div');
-  tracksTable.classList.add('tracks-table');
+  const headerRow = createElementWithAttributes('div', { className: 'track track-header' }, [
+    headerNumber,
+    headerTitle,
+    headerDuration,
+  ]);
+  const tracksTable = createElementWithAttributes('div', { className: 'tracks-table' }, [
+    headerRow,
+  ]);
 
-  // Crear el encabezado de la tabla
-  const headerRow = document.createElement('div');
-  headerRow.classList.add('track', 'track-header');
-
-  const headerNumber = document.createElement('div');
-  headerNumber.classList.add('track-number');
-  headerNumber.textContent = '#';
-
-  const headerTitle = document.createElement('div');
-  headerTitle.classList.add('track-title');
-  headerTitle.textContent = 'Título';
-
-  const headerDuration = document.createElement('div');
-  headerDuration.classList.add('track-duration');
-
-  const img = document.createElement('img');
-  img.src = '/src/img/time.svg';
-  img.alt = 'Time Icon';
-
-  headerDuration.appendChild(img);
-  headerRow.appendChild(headerNumber);
-  headerRow.appendChild(headerTitle);
-  headerRow.appendChild(headerDuration);
-  tracksTable.appendChild(headerRow);
-
-  // Crear las filas de las canciones
   tracks.forEach((track, index) => {
-    const trackItem = document.createElement('div');
-    trackItem.classList.add('track');
+    const trackNumber = createElementWithAttributes('div', {
+      className: 'track-number',
+      textContent: `${index + 1}`,
+    });
+    const trackName = createElementWithAttributes('div', {
+      className: 'track-name',
+      textContent: track?.track?.name || 'Unknown Track',
+    });
+    const artistNameDiv = createElementWithAttributes('div', {
+      id: 'artist-name-track',
+      textContent: artistName,
+    });
+    const trackTitle = createElementWithAttributes('div', { className: 'track-title' }, [
+      trackName,
+      artistNameDiv,
+    ]);
 
-    const trackNumber = document.createElement('div');
-    trackNumber.classList.add('track-number');
-    trackNumber.textContent = `${index + 1}`;
-
-    const trackTitle = document.createElement('div');
-    trackTitle.classList.add('track-title');
-
-    const trackName = document.createElement('div');
-    trackName.classList.add('track-name');
-    trackName.textContent = track?.track?.name || 'Unknown Track';
-
-    const artistNameDiv = document.createElement('div');
-    artistNameDiv.id = 'artist-name-track';
-    artistNameDiv.textContent = artistName;
-
-    trackTitle.appendChild(trackName);
-    trackTitle.appendChild(artistNameDiv);
-
-    const trackDuration = document.createElement('div');
-    trackDuration.classList.add('track-duration');
     const durationMs = track?.track?.duration?.totalMilliseconds;
-    trackDuration.textContent = durationMs ? formatDuration(durationMs) : 'N/A';
+    const trackDuration = createElementWithAttributes('div', {
+      className: 'track-duration',
+      textContent: durationMs ? formatDuration(durationMs) : 'N/A',
+    });
 
-    trackItem.appendChild(trackNumber);
-    trackItem.appendChild(trackTitle);
-    trackItem.appendChild(trackDuration);
+    const trackItem = createElementWithAttributes('div', { className: 'track' }, [
+      trackNumber,
+      trackTitle,
+      trackDuration,
+    ]);
     tracksTable.appendChild(trackItem);
   });
 
-  tracksContainer.appendChild(tracksTable);
+  const tracksContainer = createElementWithAttributes('div', { className: 'tracks' }, [
+    tracksTable,
+  ]);
   albumCard.appendChild(tracksContainer);
+}
+
+function createButtonsContainer() {
+  const buttonsContainer = createElementWithAttributes('div', { className: 'buttons-container' });
+
+  const playButton = createButtonUnified({
+    imagePath: '/src/img/play.svg',
+    altText: 'Play',
+    id: 'play-button',
+    cssClass: 'play-button',
+    type: 'image',
+  });
+
+  const followButton = createButtonUnified({
+    text: 'Follow',
+    id: 'follow-button',
+    cssClass: 'follow-button',
+    type: 'text',
+  });
+
+  const moreButton = createButtonUnified({
+    imagePath: '/src/img/more.svg',
+    altText: 'More',
+    id: 'more-button',
+    cssClass: 'more-button',
+    type: 'image',
+  });
+
+  buttonsContainer.appendChild(playButton);
+  buttonsContainer.appendChild(followButton);
+  buttonsContainer.appendChild(moreButton);
+
+  return buttonsContainer;
+}
+
+function createButtonUnified({ text, imagePath, altText, id, cssClass, type }) {
+  let button;
+
+  if (type === 'image') {
+    button = createElementWithAttributes('button', { className: cssClass, id: id }, [
+      createElementWithAttributes('img', { src: imagePath, alt: altText }),
+    ]);
+  } else if (type === 'text') {
+    button = createElementWithAttributes('button', {
+      textContent: text,
+      id: id,
+      className: cssClass,
+    });
+  }
+
+  button.addEventListener('click', () => {
+    console.log(`Button clicked: ${text || altText}`);
+  });
+
+  return button;
 }
 
 function formatDuration(ms) {
@@ -275,3 +302,10 @@ function formatDuration(ms) {
   return `${minutes}:${seconds}`;
 }
 
+function showEmptyState(container, message) {
+  const emptyStateDiv = createElementWithAttributes('div', { className: 'empty-state' }, [
+    createElementWithAttributes('p', { textContent: message }),
+  ]);
+
+  container.appendChild(emptyStateDiv);
+}

@@ -9,7 +9,7 @@
 
 body {
   font-family: var(--primary-font);
-  background-color: var(--background-color);
+  background-color: #242323;
   color: var(--text-color);
   margin: 0;
   padding: 0;
@@ -50,7 +50,7 @@ body {
   align-items: center;
 }
 
-.verified-icon {
+.verified-container img{
   width: 20px;
   height: 20px;
   margin-right: 10px;
@@ -69,11 +69,11 @@ body {
 
 #albums {
   width: 100%;
-  background-color: #282828;
+  background-color: #181818;
 }
 
 .album {
-  background-color: #282828;
+  background-color: #181818;
   border-radius: 8px;
   margin-bottom: 20px;
   padding: 20px;
@@ -127,22 +127,30 @@ body {
 
 .track {
   display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
+  padding: 10px;
+  margin-top: 15px;
 }
+
 
 .track-header {
   border-bottom: 1px solid var(--grey-color);
 }
+.track-number {
+  padding: 10px;
+  margin: 2px;
+}
 
 .track-title {
+  padding: 10px;
+  margin: 2px;
   width: 80%;
 }
 
 .track-duration {
   width: 10%;
   display: flex;
-  justify-content: flex-end;
+  padding: 10px;
+  margin: 2px;
 }
 
 .track:hover {
@@ -207,4 +215,11 @@ body {
 .more-button img {
   width: 24px;
   height: 24px;
+}
+
+.empty-state {
+  padding: 20px;
+  text-align: center;
+  color: #777;
+  font-size: 5em;
 }
