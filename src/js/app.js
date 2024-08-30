@@ -1,91 +1,292 @@
 import { data } from '/src/data/data.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const artist = data.artistUnion;
-  const containerPrincipal = document.createElement('div');
-  containerPrincipal.id = 'container-principal';
+document.addEventListener('DOMContentLoaded', main);
 
-  // PERFIL ARTISTA
-  const profile = document.createElement('div');
-  profile.id = 'artist-profile';
+function main() {
+  const { artistUnion: artist } = data || {};
+  if (!artist) {
+    console.error('No se encontraron datos del artista en el archivo.');
+    return;
+  }
 
-  const profileImage = document.createElement('img');
-  profileImage.src = artist.profile.imageUrl;
-  profileImage.alt = `${artist.profile.name} profile picture`;
+  const containerPrincipal = createElementWithAttributes('div', {
+    className: 'principal-container',
+  });
 
-  const artistName = document.createElement('div');
-  artistName.id = 'artist-name';
-  artistName.textContent = artist.profile.name;
+  createArtistProfile(artist.profile, artist.stats, containerPrincipal);
+  createAlbums(artist.discography?.albums?.items || [], artist.profile.name, containerPrincipal);
 
-  profile.appendChild(profileImage);
-  profile.appendChild(artistName);
-  containerPrincipal.appendChild(profile);
+  document.body.appendChild(containerPrincipal);
+}
 
-  // ALBUMS
-  const albumsContainer = document.createElement('div');
-  albumsContainer.id = 'albums';
+function createElementWithAttributes(tag, attributes = {}, children = []) {
+  const element = document.createElement(tag);
 
-  artist.discography.albums.items.forEach((album) => {
-    album.releases.items.forEach((release) => {
-      const albumCard = document.createElement('div');
-      albumCard.classList.add('album');
+  Object.entries(attributes).forEach(([key, value]) => {
+    if (key === 'className') {
+      element.classList.add(...value.split(' '));
+    } else {
+      element[key] = value;
+    }
+  });
 
-      const albumHeader = document.createElement('div');
-      albumHeader.classList.add('album-header');
+  children.forEach((child) => {
+    if (typeof child === 'string') {
+      element.appendChild(document.createTextNode(child));
+    } else {
+      element.appendChild(child);
+    }
+  });
 
-      const albumImage = document.createElement('img');
-      albumImage.src = release.coverArt.sources[0].url;
-      albumImage.alt = `${release.name} cover`;
+  return element;
+}
 
-      const albumTitle = document.createElement('div');
-      albumTitle.classList.add('album-title');
-      albumTitle.textContent = release.name;
+function createArtistProfile(profile, stats, container) {
+  if (!profile || !stats) {
+    showEmptyState(container, 'No se encontraron datos del perfil o estadísticas del artista.');
+    return;
+  }
 
-      const albumYear = document.createElement('div');
-      albumYear.classList.add('album-year');
-      albumYear.textContent = release.date.year;
+  const profileDiv = createElementWithAttributes('div', {
+    className: 'artist-profile',
+  });
 
-      albumHeader.appendChild(albumImage);
-      albumHeader.appendChild(albumTitle);
-      albumHeader.appendChild(albumYear);
-      albumCard.appendChild(albumHeader);
+  const profileImage = createElementWithAttributes('img', {
+    src: profile.imageUrl,
+    alt: `${profile.name} profile picture`,
+    className: 'profile-image',
+  });
 
-      // CANCIONES
-      const tracksContainer = document.createElement('div');
-      tracksContainer.classList.add('tracks');
+  const overlay = createElementWithAttributes('div', { className: 'overlay' });
+  const artistInfo = createElementWithAttributes('div', { className: 'artist-info' });
 
-      release.tracks.items.forEach((track, index) => {
-        const trackItem = document.createElement('div');
-        trackItem.classList.add('track');
+  if (profile.verified) {
+    const verifiedContainer = createElementWithAttributes(
+      'div',
+      {
+        className: 'verified-container',
+      },
+      [
+        createElementWithAttributes('img', {
+          src: '/src/img/icon-verificado.png',
+          alt: 'Artista verificado',
+        }),
+        createElementWithAttributes('span', {}, ['Verified Artist']),
+      ],
+    );
 
-        const trackName = document.createElement('div');
-        trackName.classList.add('track-name');
-        trackName.textContent = `${index + 1}. ${track.track.name}`;
+    artistInfo.appendChild(verifiedContainer);
+  }
 
-        const trackDuration = document.createElement('div');
-        trackDuration.classList.add('track-duration');
-        if (track.track.duration && track.track.duration.totalMilliseconds) {
-          trackDuration.textContent = formatDuration(track.track.duration.totalMilliseconds);
-        } else {
-          trackDuration.textContent = 'N/A';
-        }
+  const artistName = createElementWithAttributes('h1', {
+    className: 'artist-name',
+    textContent: profile.name || 'Unknown Artist',
+  });
 
-        trackItem.appendChild(trackName);
-        trackItem.appendChild(trackDuration);
-        tracksContainer.appendChild(trackItem);
+  const formattedListeners = stats.monthlyListeners?.toLocaleString();
+  const monthlyListeners = createElementWithAttributes('p', {
+    className: 'monthly-listeners',
+    textContent: formattedListeners ? `${formattedListeners} monthly listeners` : '',
+  });
+
+  artistInfo.appendChild(
+    createElementWithAttributes('div', { className: 'artist-name-container' }, [artistName]),
+  );
+  artistInfo.appendChild(monthlyListeners);
+
+  overlay.appendChild(artistInfo);
+  profileDiv.appendChild(profileImage);
+  profileDiv.appendChild(overlay);
+
+  container.appendChild(profileDiv);
+}
+
+function createAlbums(albums, artistName, container) {
+  if (!albums.length) {
+    showEmptyState(container, 'No se encontraron álbumes.');
+    return;
+  }
+
+  const albumsContainer = createElementWithAttributes('div', { className: 'albums' });
+  albumsContainer.appendChild(createButtonsContainer());
+
+  albums.forEach((album) => {
+    album?.releases?.items.forEach((release) => {
+      const releaseName = release?.name || 'Unknown Album';
+      const albumImage = createElementWithAttributes('img', {
+        src: release?.coverArt?.sources?.[0]?.url || '',
+        alt: `${releaseName} cover`,
+        className: 'album-image',
       });
 
-      albumCard.appendChild(tracksContainer);
+      const albumInfo = createElementWithAttributes('div', { className: 'album-info' }, [
+        createElementWithAttributes('div', { className: 'album-title', textContent: releaseName }),
+        createElementWithAttributes('div', {
+          className: 'album-year',
+          textContent: `Album • ${release?.date?.year || 'Unknown Year'} • ${
+            release?.tracks?.items?.length || 0
+          } songs`,
+        }),
+        createAlbumActions(),
+      ]);
+
+      const albumCard = createElementWithAttributes('div', { className: 'album' }, [
+        createElementWithAttributes('div', { className: 'album-header' }, [albumImage, albumInfo]),
+      ]);
+
+      createTracks(release?.tracks?.items || [], albumCard, artistName);
       albumsContainer.appendChild(albumCard);
     });
   });
 
-  containerPrincipal.appendChild(albumsContainer);
-  document.body.appendChild(containerPrincipal);
-});
+  container.appendChild(albumsContainer);
+}
 
-function formatDuration(ms) {
+function createAlbumActions() {
+  return createElementWithAttributes('div', { className: 'album-actions' }, [
+    createButtonUnified({
+      imagePath: '/src/img/play.svg',
+      altText: 'Play',
+      cssClass: 'album-action-button',
+      type: 'image',
+    }),
+    createButtonUnified({
+      imagePath: '/src/img/add.svg',
+      altText: 'Add',
+      cssClass: 'album-action-button',
+      type: 'image',
+    }),
+    createButtonUnified({
+      imagePath: '/src/img/more.svg',
+      altText: 'More',
+      cssClass: 'album-action-button',
+      type: 'image',
+    }),
+  ]);
+}
+
+function createTracks(tracks, albumCard, artistName) {
+  if (!tracks.length) {
+    console.warn('No se encontraron pistas.');
+    return;
+  }
+
+  const headerRow = createElementWithAttributes('div', { className: 'track track-header' }, [
+    createElementWithAttributes('div', { className: 'track-number', textContent: '#' }),
+    createElementWithAttributes('div', { className: 'track-title', textContent: 'Título' }),
+    createElementWithAttributes('div', { className: 'track-duration' }, [
+      createElementWithAttributes('img', { src: '/src/img/time.svg', alt: 'Time Icon' }),
+    ]),
+  ]);
+
+  const tracksTable = createElementWithAttributes('div', { className: 'tracks-table' }, [
+    headerRow,
+  ]);
+
+  tracks.forEach((track, index) => {
+    const trackNumber = createElementWithAttributes('div', {
+      className: 'track-number',
+      textContent: `${index + 1}`,
+    });
+
+    const trackName = createElementWithAttributes('div', {
+      className: 'track-name',
+      textContent: track?.track?.name || 'Unknown Track',
+    });
+
+    const artistNameDiv = createElementWithAttributes('div', {
+      id: 'artist-name-track',
+      textContent: artistName,
+    });
+
+    const trackTitle = createElementWithAttributes('div', { className: 'track-title' }, [
+      trackName,
+      artistNameDiv,
+    ]);
+
+    const durationMs = track?.track?.duration?.totalMilliseconds;
+    const trackDuration = createElementWithAttributes('div', {
+      className: 'track-duration',
+      textContent: durationMs ? formatDuration(durationMs) : 'N/A',
+    });
+
+    const trackItem = createElementWithAttributes('div', { className: 'track' }, [
+      trackNumber,
+      trackTitle,
+      trackDuration,
+    ]);
+
+    tracksTable.appendChild(trackItem);
+  });
+
+  const tracksContainer = createElementWithAttributes('div', { className: 'tracks' }, [
+    tracksTable,
+  ]);
+  albumCard.appendChild(tracksContainer);
+}
+
+function createButtonsContainer() {
+  const buttonsContainer = createElementWithAttributes('div', { className: 'buttons-container' });
+
+  buttonsContainer.appendChild(
+    createButtonUnified({
+      imagePath: '/src/img/play.svg',
+      altText: 'Play',
+      id: 'play-button',
+      cssClass: 'play-button',
+      type: 'image',
+    }),
+  );
+
+  buttonsContainer.appendChild(
+    createButtonUnified({
+      text: 'Follow',
+      id: 'follow-button',
+      cssClass: 'follow-button',
+      type: 'text',
+    }),
+  );
+
+  buttonsContainer.appendChild(
+    createButtonUnified({
+      imagePath: '/src/img/more.svg',
+      altText: 'More',
+      id: 'more-button',
+      cssClass: 'more-button',
+      type: 'image',
+    }),
+  );
+
+  return buttonsContainer;
+}
+
+function createButtonUnified({ text, imagePath, altText, id, cssClass, type }) {
+  const button = createElementWithAttributes(
+    'button',
+    { id, className: cssClass },
+    type === 'image'
+      ? [createElementWithAttributes('img', { src: imagePath, alt: altText })]
+      : [text],
+  );
+
+  button.addEventListener('click', () => {
+    console.log(`Button clicked: ${text || altText}`);
+  });
+
+  return button;
+}
+
+const formatDuration = (ms) => {
   const minutes = Math.floor(ms / 60000);
-  const seconds = Math.floor((ms % 60000) / 1000);
-  return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  const seconds = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0');
+  return `${minutes}:${seconds}`;
+};
+
+function showEmptyState(container, message) {
+  const emptyStateMessage = createElementWithAttributes('p', {
+    className: 'empty-state-message',
+    textContent: message,
+  });
+
+  container.appendChild(emptyStateMessage);
 }
